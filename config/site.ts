@@ -3,11 +3,11 @@ export const site = {
   name: 'JrNova',
   accent: 'EX',
   handle: '@JrNovaEX',
-  avatar: '/avatar.jpg',
+  avatar: '/avatar.png',
   tagline: 'Faceless by choice.',
   bio: [
     'Names are just handles, and handles are just doors.',
-    'Everything I make, share and listen to ends up on this page.'
+    'Everything I make is built with intent.'
   ],
   links: [
     { label: 'Telegram', handle: '@jrnovaexbot', url: 'https://t.me/jrnovaexbot' },
