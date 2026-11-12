@@ -1,14 +1,26 @@
 <script setup lang="ts">
 import { site } from '~/config/site'
+
+type Info = {
+  status?: { key: string; label: string; color: string }
+  todos?: { id: number; text: string; done: boolean; sort: number; priority: number }[]
+}
+
 useHead({ title: `${site.name}${site.accent}`, meta: [
   { name: 'description', content: site.bio.join(' ') },
   { property: 'og:title', content: `${site.name}${site.accent}` },
   { property: 'og:description', content: site.tagline }
 ] })
 const now = ref<Date | null>(null)
-const broken = ref(false)
+const info = ref<Info | null>(null)
+const infoState = ref<'loading' | 'ready' | 'error'>('loading')
 const day = computed(() => now.value?.toLocaleDateString('en-US', { weekday: 'long' }) ?? '')
 const time = computed(() => now.value?.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }) ?? '--:--')
+const status = computed(() => info.value?.status ?? null)
+const statusColor = computed(() => (status.value ? site.statusColors[status.value.color] ?? 'rgba(236,236,238,.5)' : 'rgba(236,236,238,.3)'))
+const todos = computed(() => [...(info.value?.todos ?? [])].sort(
+  (a, b) => b.priority - a.priority || a.sort - b.sort || a.id - b.id
+))
 const top = site.links.slice(0, 4)
 const rest = site.links.slice(4)
 const fullName = `${site.name}${site.accent}`
@@ -19,7 +31,19 @@ function track(e: PointerEvent) {
   t.style.setProperty('--x', e.clientX - r.left + 'px')
   t.style.setProperty('--y', e.clientY - r.top + 'px')
 }
-onMounted(() => { now.value = new Date(); setInterval(() => (now.value = new Date()), 20000) })
+async function loadInfo() {
+  try {
+    info.value = await $fetch<Info>('/api/info')
+    infoState.value = 'ready'
+  } catch {
+    infoState.value = 'error'
+  }
+}
+onMounted(() => {
+  now.value = new Date()
+  setInterval(() => (now.value = new Date()), 20000)
+  loadInfo()
+})
 </script>
 <template>
   <div>
@@ -41,17 +65,14 @@ onMounted(() => { now.value = new Date(); setInterval(() => (now.value = new Dat
               </div>
             </div>
           </section>
-          <!-- photo -->
-          <section class="tile col-span-2 row-span-2 !p-0 lg:col-span-4" style="--d:.1s">
-            <img v-if="!broken" :src="site.avatar" :alt="fullName" class="absolute inset-0 h-full w-full object-cover grayscale contrast-[1.08]" @error="broken = true">
-            <div v-else class="absolute inset-0 grid place-items-center text-7xl text-white/70">{{ site.name[0] }}</div>
-            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-            <span class="absolute bottom-4 left-4 rounded-full border border-white/20 bg-black/30 px-3 py-1.5 text-[11px] tracking-wider backdrop-blur">{{ site.handle }}</span>
-          </section>
+          <!-- photo + tasks -->
+          <BentoPhoto :todos="todos" :state="infoState" class="col-span-2 row-span-2 lg:col-span-4" />
           <!-- status + note -->
           <section class="tile col-span-1 lg:col-span-3" style="--d:.15s">
             <span class="lbl">Status</span>
-            <span class="big"><span class="dot" />{{ site.status }}</span>
+            <span class="big status-line">
+              <span class="dot" :style="{ background: statusColor, boxShadow: `0 0 10px ${statusColor}` }" />{{ status?.label ?? (infoState === 'error' ? 'Unavailable' : '—') }}
+            </span>
           </section>
           <section class="tile col-span-1 lg:col-span-3" style="--d:.2s">
             <span class="lbl">Note</span>
