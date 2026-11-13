@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     return await $fetch<Info>(
-      `${process.env.TODO_API_BASE || 'https://novaex.vercel.app'}/api/info`,
+      `${process.env.TODO_API_BASE || 'https://jrnovabot.vercel.app'}/api/info`,
       { headers: { Authorization: `Bearer ${token}` }, timeout: 8000 }
     )
   } catch {

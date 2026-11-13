@@ -21,10 +21,10 @@ export const site = {
   } as Record<string, string>,
   links: [
     { label: 'Telegram', handle: '@jrnovaexbot', desc: 'Chat with me on Telegram', url: 'https://t.me/jrnovaexbot' },
-    { label: 'TikTok', handle: '@jrnovaex', url: 'https://www.tiktok.com/@jrnovaex' },
+    { label: 'TikTok', handle: '@srnovaex', url: 'https://www.tiktok.com/@srnovaex' },
     { label: 'dev-null', handle: '@JrNovaEX', url: 'https://dev-null.sh/@JrNovaEX' },
     { label: 'GitHub', handle: 'JrNovaEX', url: 'https://github.com/JrNovaEX/' },
-    { label: 'X', handle: '@JrNovaEX', url: 'https://x.com/JrNovaEX' },
+    { label: 'X', handle: '@SrNovaEX', url: 'https://x.com/SrNovaEX' },
     { label: 'Reddit', handle: 'u/JrNovaEX', url: 'https://www.reddit.com/u/JrNovaEX/' },
     { label: 'Website', handle: 'jrnovaex.vercel.app', url: 'https://jrnovaex.vercel.app' }
   ],
