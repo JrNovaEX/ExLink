@@ -49,7 +49,7 @@ function focusOut() {
         <ul v-if="state === 'ready' && todos.length" class="todo-list">
           <li v-for="t in todos" :key="t.id" :class="{ done: t.done }">
             <span class="box"><svg v-if="t.done" viewBox="0 0 10 10"><path d="M1.5 5.2 4 7.7 8.5 2.5" /></svg></span>
-            <span class="tid">#{{ t.id }}</span>
+            <span class="tid">{{ t.sort }} :</span>
             <span class="ttxt">{{ t.text }}</span>
           </li>
         </ul>

@@ -19,7 +19,7 @@ const time = computed(() => now.value?.toLocaleTimeString('en-GB', { hour: '2-di
 const status = computed(() => info.value?.status ?? null)
 const statusColor = computed(() => (status.value ? site.statusColors[status.value.color] ?? 'rgba(236,236,238,.5)' : 'rgba(236,236,238,.3)'))
 const todos = computed(() => [...(info.value?.todos ?? [])].sort(
-  (a, b) => b.priority - a.priority || a.sort - b.sort || a.id - b.id
+  (a, b) => a.sort - b.sort || a.id - b.id
 ))
 const top = site.links.slice(0, 4)
 const rest = site.links.slice(4)
