@@ -408,9 +408,28 @@ a.tile:focus-visible {
 }
 
 .todo-list .ttxt {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap
+}
+
+.todo-list .ttxt-in {
+    display: inline-block;
+    vertical-align: top;
+    max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap
+    transition: transform .5s linear
+}
+
+.todo-list li:hover .ttxt-in,
+.todo-list li:active .ttxt-in {
+    max-width: none;
+    width: max-content;
+    text-overflow: clip;
+    transform: translateX(var(--shift, 0));
+    transition-duration: var(--dur, 1s)
 }
 
 .todo-list li.done .box {
@@ -470,5 +489,17 @@ a.tile:focus-visible {
 
     .flip {
         transition: none
+    }
+
+    .todo-list .ttxt-in {
+        transition: none
+    }
+
+    .todo-list li:hover .ttxt-in,
+    .todo-list li:active .ttxt-in {
+        width: auto;
+        max-width: 100%;
+        text-overflow: ellipsis;
+        transform: none
     }
 }

@@ -7,7 +7,20 @@ const props = defineProps<{ todos: Todo[]; state: 'loading' | 'ready' | 'error' 
 const fullName = `${site.name}${site.accent}`
 const broken = ref(false)
 const flipped = ref(false)
+const listEl = ref<HTMLElement | null>(null)
 const open = computed(() => props.todos.filter((t) => !t.done).length)
+
+// Text that overflows slides left on hover to reveal the hidden part.
+function measure() {
+  for (const li of listEl.value?.querySelectorAll<HTMLElement>('li') ?? []) {
+    const txt = li.querySelector<HTMLElement>('.ttxt-in')
+    if (!txt) continue
+    const shift = txt.scrollWidth - txt.clientWidth
+    const dir = getComputedStyle(txt).direction === 'rtl' ? 1 : -1
+    li.style.setProperty('--shift', shift > 1 ? `${dir * shift}px` : '0px')
+    li.style.setProperty('--dur', `${Math.min(8000, Math.max(1200, shift * 45))}ms`)
+  }
+}
 
 function enter(e: PointerEvent) {
   if (e.pointerType === 'mouse') flipped.value = true
@@ -27,6 +40,13 @@ function focusIn(e: FocusEvent) {
 function focusOut() {
   flipped.value = false
 }
+
+onMounted(() => {
+  nextTick(measure)
+  window.addEventListener('resize', measure)
+})
+onBeforeUnmount(() => window.removeEventListener('resize', measure))
+watch([() => props.state, () => props.todos], () => nextTick(measure), { deep: true })
 </script>
 
 <template>
@@ -46,11 +66,11 @@ function focusOut() {
           <span class="lbl">Tasks</span>
           <span v-if="state === 'ready'" class="lbl">{{ open }} open / {{ todos.length }}</span>
         </div>
-        <ul v-if="state === 'ready' && todos.length" class="todo-list">
+        <ul v-if="state === 'ready' && todos.length" ref="listEl" class="todo-list">
           <li v-for="t in todos" :key="t.id" :class="{ done: t.done }">
             <span class="box"><svg v-if="t.done" viewBox="0 0 10 10"><path d="M1.5 5.2 4 7.7 8.5 2.5" /></svg></span>
             <span class="tid">{{ t.sort }} :</span>
-            <span class="ttxt">{{ t.text }}</span>
+            <span class="ttxt" dir="auto"><span class="ttxt-in">{{ t.text }}</span></span>
           </li>
         </ul>
         <p v-else-if="state === 'error'" class="lbl todo-empty">Task feed offline.</p>
